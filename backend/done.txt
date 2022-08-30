@@ -1,0 +1,10 @@
+Delete endpoint
+Category endpoint
+New question endpoint
+Question endpoint
+Get question based on category
+Search endpoint
+
+pending:
+quiz endpoint
+
