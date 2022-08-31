@@ -37,6 +37,14 @@ class TriviaTestCase(unittest.TestCase):
     TODO
     Write at least one test for each test for successful operation and for expected errors.
     """
+
+
+    def test_pagination(self):
+        response = self.client(self)
+        
+        self.assertTrue(['current_questions'])
+
+    
     def test_get_categories(self):
         response = self.client().get('/categories')
         data = json.loads(response.data)
@@ -45,6 +53,14 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'], True)
         self.assertTrue(len(data['categories']))
         self.assertTrue(data['num_of_categories'])
+
+    def test_wrong_or_non_existent_category(self):
+        response = self.client().get('/categories/2')
+        data = json.loads(response.data)
+
+        self.assertEqual(response.status_code,404)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Resource Not Found')
 
     def test_get_questions(self):
         response = self.client().get('/questions')
@@ -65,13 +81,14 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['message'], 'Resource Not Found')        
 
     def test_delete_questions(self):
-        response = self.client().delete('/questions/86')
+        response = self.client().delete('/questions/12')
         data =  json.loads(response.data)
-        question = Question.query.filter(Question.id==86).one_or_none()
+        question = Question.query.filter(Question.id==12).one_or_none()
+        # 9,2,4,6,12,14,16,17,18
 
         self.assertEqual(response.status_code,200)
         self.assertEqual(data['success'],True)
-        self.assertEqual(data['deleted_question'],86)
+        self.assertEqual(data['deleted_question'],12)
         self.assertEqual(question,None)
         self.assertTrue(data['totalQuestions'])
         self.assertTrue(len(data['questions']))
@@ -107,6 +124,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'], True)
         self.assertTrue(data['questions'])    
         self.assertTrue(data['totalQuestions'])
+      
 
     def test_search_non_existent_question(self): 
         response = self.client().post('/questions/search', json = {'searchTerm':'appleterm'})
@@ -133,9 +151,24 @@ class TriviaTestCase(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['success'], True)
-        self.assertEqual(data['totalQuestion'],0)
-        self.assertEqual(data['currentCategory'],0)
+        self.assertEqual(data['totalQuestions'],0)
         self.assertEqual(len(data['questions']),0) 
+
+    def test_quiz(self):
+        response = self.client().post('/quizzes', json={"previous_questions":[2,4,6,10],"quiz_category":{"id":"2","type":"art"}})
+        data = json.loads(response.data)
+
+        self.assertEqual(response.status_code,200) 
+        self.assertEqual(data['success'],True)
+        self.assertTrue(data['question'])  
+
+    def test_quiz_with_wrong_method(self):
+        response = self.client().get('/quizzes', json={"previous_questions":[2,4,6,10],"quiz_category":{"id":"2","type":"art"}})
+        data = json.loads(response.data)
+
+        self.assertEqual(response.status_code,405) 
+        self.assertEqual(data['success'],False)
+        self.assertTrue(data['message'],'The method is not allowed for the requested URL.')   
          
         
       

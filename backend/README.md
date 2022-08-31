@@ -335,8 +335,25 @@ RESOURCES ENDPOINT: The folLowing are the endpoints allowed by the Trivia API an
           "success": true,
           "totalQuestions": 2
         }
+
+    7. Endpoint: /quizzes
+       Method: POST
+       Response: This endpoint allows users play a quiz based on the catgory that was choosen. Questions are not repeated and are selected at random.
+       curl: curl -X POST 'http://127.0.0.1:5000/quizzes' -H 'Content-Type:application/json' -d'        {"previous_questions":[2,4,6], "quiz_category":{"id":"2","type":"art"}}'
+
+                        {
+              "question": {
+                "answer": "Escher",
+                "category": 2,
+                "difficulty": 1,
+                "id": 16,
+                "question": "Which Dutch graphic artist\u2013initials M C was a creator of optical illusions?"
+              },
+              "success": true
+            }
+
           
-    ERROR HANDLING
+             ERROR HANDLING
     The following errors are captured is this API.
     Error 400: handles bad requests. For axample deleting a non_existent or alreday deleted question
         def bad_request(error):
@@ -376,4 +393,10 @@ RESOURCES ENDPOINT: The folLowing are the endpoints allowed by the Trivia API an
                   'success': False,
                   'message':'Internal server error.',
                   'error': 500
-              }), 500                          
+              }), 500          
+
+
+
+                              
+
+
