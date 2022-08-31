@@ -193,35 +193,21 @@ def create_app(test_config=None):
             body = request.get_json()
             quiz_category = body.get('quiz_category', None)
             prev_questions = body.get('previous_questions', None)
-            selected_category = quiz_category.get('id')
-
-        #     if selected_category != 0:
-        #         questions = Question.query.filter(Question.id.notin_(prev_questions),Question.category==selected_category).all()
-        #         # quiz = [question for question in questions if question not in prev_questions]
-
-        #     else:
-        #         questions = Question.query.filter(Question.id.not_in_(prev_questions)).all()
-        #         # quiz = [question for question in questions if question not in prev_questions]
-
-        #     if questions:
-        #         quiz_question = random.choice(questions)
-        #     else:
-        #         quiz_question = None
-            
-        #     return jsonify({
-        #         'success':True,
-        #         'question':quiz_question.format()
-        #     })
-        # except:
-        #     abort(422)
-
+            selected_category = quiz_category.get('id') 
             
             if selected_category !=0:
                 available_questions = Question.query.filter(Question.category==selected_category).all()
                 question_list = [question.id for question in available_questions]
-                quiz_questions = random.choice([question for question in question_list if question not in prev_questions])
-                question = Question.query.filter(Question.category==selected_category, Question.id==quiz_questions).one_or_none()
-             
+                quiz_questions = [question for question in question_list if question not in prev_questions]
+
+                if len(quiz_questions) == 0:
+                    return jsonify({
+                        'success':True
+                    })
+                    
+                random_question = random.choice(quiz_questions)
+                question = Question.query.filter(Question.category==selected_category, Question.id==random_question).one_or_none()
+                           
                 return jsonify({
                 'success':True,
                 'question':question.format()
@@ -232,8 +218,7 @@ def create_app(test_config=None):
                 question_list_for_all = [question.id for question in available_questions_for_all]
                 quiz_questions_for_all = random.choice([question for question in question_list_for_all if question not in prev_questions])
                 question = Question.query.filter(Question.id==quiz_questions_for_all).one_or_none()
-                # if quiz_questions_for_all is None:
-                #    quiz_question_for_all = None
+              
                
                 return jsonify({
                 'success':True,

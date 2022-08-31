@@ -8,3 +8,23 @@ Search endpoint
 pending:
 quiz endpoint
 
+
+#     if selected_category != 0:
+        #         questions = Question.query.filter(Question.id.notin_(prev_questions),Question.category==selected_category).all()
+        #         # quiz = [question for question in questions if question not in prev_questions]
+
+        #     else:
+        #         questions = Question.query.filter(Question.id.not_in_(prev_questions)).all()
+        #         # quiz = [question for question in questions if question not in prev_questions]
+
+        #     if questions:
+        #         quiz_question = random.choice(questions)
+        #     else:
+        #         quiz_question = None
+            
+        #     return jsonify({
+        #         'success':True,
+        #         'question':quiz_question.format()
+        #     })
+        # except:
+        #     abort(422)
